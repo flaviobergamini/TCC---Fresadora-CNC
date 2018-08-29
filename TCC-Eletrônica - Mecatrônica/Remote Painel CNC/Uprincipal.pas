@@ -1,0 +1,294 @@
+unit Uprincipal;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, CPort, Vcl.StdCtrls,
+  Vcl.Buttons, CPortCtl, Vcl.ExtCtrls, Vcl.Touch.Keyboard, Vcl.Imaging.pngimage;
+
+type
+  TCNC_Eletro_Program = class(TForm)
+    MainMenu1: TMainMenu;
+    Arquivos1: TMenuItem;
+    Sair1: TMenuItem;
+    Comunicao1: TMenuItem;
+    btDesconectar: TMenuItem;
+    Sobre1: TMenuItem;
+    ComPort: TComPort;
+    traco: TMenuItem;
+    Panel1: TPanel;
+    btndesconectar: TBitBtn;
+    btncomunicacao: TBitBtn;
+    btniniciar: TBitBtn;
+    btnpausar: TBitBtn;
+    btnferramenta1: TBitBtn;
+    bntresfriar1: TBitBtn;
+    Memo: TMemo;
+    Edit_Data: TEdit;
+    btnenviar: TBitBtn;
+    enviar_caracter: TCheckBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    btnferramenta2: TBitBtn;
+    bntresfriar2: TBitBtn;
+    Panel3: TPanel;
+    Label5: TLabel;
+    btnLimpar: TBitBtn;
+    btSair: TMenuItem;
+    Label6: TLabel;
+    Label7: TLabel;
+    btnFRL: TBitBtn;
+    btnFRD: TBitBtn;
+    LF1: TImage;
+    LF2: TImage;
+    LR1: TImage;
+    LR2: TImage;
+    Label3: TLabel;
+    Label4: TLabel;
+    LH1: TImage;
+    LH2: TImage;
+    Label8: TLabel;
+    procedure Comunicao1Click(Sender: TObject);
+    procedure btndesconectarClick(Sender: TObject);
+    procedure btncomunicacaoClick(Sender: TObject);
+    procedure btniniciarClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure OnRxChar(Sender: TObject; Count: Integer);
+    procedure btnenviarClick(Sender: TObject);
+    procedure btnferramenta1Click(Sender: TObject);
+    procedure bntresfriar2Click(Sender: TObject);
+    procedure Sair1Click(Sender: TObject);
+    procedure btnFRLClick(Sender: TObject);
+    procedure Sobre1Click(Sender: TObject);
+    procedure btnLimparClick(Sender: TObject);
+    procedure btSairClick(Sender: TObject);
+    procedure btDesconectarClick(Sender: TObject);
+
+  private
+    { Private declarations }
+  public
+    var x: integer;
+    var y: integer;
+    var Str: String;
+  end;
+
+var
+  CNC_Eletro_Program: TCNC_Eletro_Program;
+
+implementation
+
+{$R *.dfm}
+
+uses Usobre;
+
+procedure TCNC_Eletro_Program.bntresfriar2Click(Sender: TObject);
+begin
+  if bntresfriar1.Enabled = false then
+  begin
+    ComPort.WriteStr('B');
+    Memo.Text := Memo.Text + 'Resfriamento Desligado' + #13#10;
+    bntresfriar2.Caption := 'Ligar';
+    bntresfriar1.Enabled := true ;
+    LR2.Visible := true;
+  end
+  else
+  begin
+    ComPort.WriteStr('b');
+    Memo.Text := Memo.Text + 'Resfriamento Ligado' + #13#10;
+    bntresfriar2.Caption := 'Desligar';
+    bntresfriar1.Enabled := false;
+    LR2.Visible := false;
+  end;
+end;
+
+procedure TCNC_Eletro_Program.btDesconectarClick(Sender: TObject);
+begin
+    ComPort.Close;
+
+    btndesconectar.Enabled:=False;
+    btnenviar.Enabled:=False;
+    btnferramenta1.Enabled:=False;
+    btnferramenta2.Enabled:=False;
+    btnFRD.Enabled:=False;
+    btnFRL.Enabled:=False;
+    btniniciar.Enabled:=False;
+    btnpausar.Enabled:=False;
+    btnLimpar.Enabled:=False;
+    bntresfriar2.Enabled:=False;
+    bntresfriar1.Enabled:=False;
+
+end;
+
+procedure TCNC_Eletro_Program.btncomunicacaoClick(Sender: TObject);
+begin
+ComPort.ShowSetupDialog;
+
+if ComPort.Connected then
+    ComPort.Close
+  else
+
+    ComPort.Open;
+
+    btndesconectar.Enabled:=True;
+    btnenviar.Enabled:=True;
+    btnferramenta1.Enabled:=True;
+    btnferramenta2.Enabled:=True;
+    btnFRL.Enabled:=True;
+    btniniciar.Enabled:=True;
+    btnpausar.Enabled:=True;
+    btnLimpar.Enabled:=True;
+    bntresfriar2.Enabled:=True;
+    bntresfriar1.Enabled:=True;
+end;
+
+procedure TCNC_Eletro_Program.btndesconectarClick(Sender: TObject);
+begin
+    ComPort.Close;
+
+    btndesconectar.Enabled:=False;
+    btnenviar.Enabled:=False;
+    btnferramenta1.Enabled:=False;
+    btnferramenta2.Enabled:=False;
+    btnFRL.Enabled:=False;
+    btniniciar.Enabled:=False;
+    btnpausar.Enabled:=False;
+    btnLimpar.Enabled:=False;
+    bntresfriar2.Enabled:=False;
+    bntresfriar1.Enabled:=False;
+
+end;
+
+procedure TCNC_Eletro_Program.btnenviarClick(Sender: TObject);
+begin
+  Str := Edit_Data.Text;
+  if enviar_caracter.Checked then
+    Str := Str + #13#10;
+    ComPort.WriteStr(Str);
+  Edit_Data.Clear;
+
+end;
+
+procedure TCNC_Eletro_Program.btnferramenta1Click(Sender: TObject);
+begin
+  if btnferramenta2.Enabled = false then
+  begin
+    ComPort.WriteStr('F');
+    Memo.Text := Memo.Text + 'Ferramenta Desligada' + #13#10;
+    btnferramenta1.Caption := 'Ligar';
+    btnferramenta2.Enabled := true;
+    LF2.Visible := true;
+  end
+  else
+  begin
+    ComPort.WriteStr('f');
+    Memo.Text := Memo.Text + 'Ferramenta Ligada' + #13#10;
+    btnferramenta1.Caption := 'Desligar';
+    btnferramenta2.Enabled := false;
+    LF2.Visible := false;
+  end;
+
+end;
+
+procedure TCNC_Eletro_Program.btnFRLClick(Sender: TObject);
+begin
+  if btnFRD.Enabled = false then
+  begin
+    ComPort.WriteStr('M');
+    Memo.Text := Memo.Text + 'Ferramenta e Resfriamento Desligados' + #13#10;
+    btnFRL.Caption := 'Ligar';
+    btnFRD.Enabled := true;
+    LF2.Visible :=true;
+    LR2.Visible :=true;
+  end
+  else
+  begin
+    ComPort.WriteStr('m');
+    Memo.Text := Memo.Text + 'Ferramenta e Resfriamento Ligados' + #13#10;
+    btnFRL.Caption := 'Desligar';
+    btnFRD.Enabled := false;
+    LF2.Visible :=false;
+    LR2.Visible :=false;
+  end;
+end;
+
+procedure TCNC_Eletro_Program.btniniciarClick(Sender: TObject);
+begin
+  if btnpausar.Enabled = false then
+  begin
+    ComPort.WriteStr('H');
+    Memo.Text := Memo.Text + 'Pausado' + #13#10;
+    btniniciar.Caption := 'Iniciar';
+    btnpausar.Enabled := true;
+    LH2.Visible := true;
+  end
+  else
+  begin
+    ComPort.WriteStr('h');
+    Memo.Text := Memo.Text + 'Iniciado' + #13#10;
+    btniniciar.Caption := 'Pausar';
+    btnpausar.Enabled := false;
+    LH2.Visible :=false;
+  end;
+end;
+
+procedure TCNC_Eletro_Program.btnLimparClick(Sender: TObject);
+begin
+  Memo.Clear;
+end;
+
+procedure TCNC_Eletro_Program.btSairClick(Sender: TObject);
+begin
+Close;
+end;
+
+procedure TCNC_Eletro_Program.Comunicao1Click(Sender: TObject);
+begin
+ComPort.ShowSetupDialog;
+
+if ComPort.Connected then
+    ComPort.Close
+  else
+
+    ComPort.Open;
+
+    btndesconectar.Enabled:=True;
+    btnenviar.Enabled:=True;
+    btnferramenta1.Enabled:=True;
+    btnferramenta2.Enabled:=True;
+    btnFRL.Enabled:=True;
+    btniniciar.Enabled:=True;
+    btnpausar.Enabled:=True;
+    btnLimpar.Enabled:=True;
+    bntresfriar2.Enabled:=True;
+    bntresfriar1.Enabled:=True;
+end;
+
+procedure TCNC_Eletro_Program.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  ComPort.Close;
+end;
+
+procedure TCNC_Eletro_Program.OnRxChar(Sender: TObject; Count: Integer);
+var
+ Str: String;
+begin
+  ComPort.ReadStr(Str, Count);
+  Memo.Text := Memo.Text + Str;
+end;
+
+
+procedure TCNC_Eletro_Program.Sair1Click(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TCNC_Eletro_Program.Sobre1Click(Sender: TObject);
+begin
+  ShowMessage ('                              Remote Painel CNC'+ #13#10 + #13#10 + 'Cursos:' + #13#10 + 'Mecatrônica e Eletrônica Integrado' + #13#10 + #13#10 + 'Integrantes:' + #13#10 + 'Flávio' + #13#10 + 'Fábio'  + #13#10 + 'Ariane'  + #13#10 + 'Rafael'  + #13#10 + 'Isack' + #13#10 + 'Bruno'+ #13#10 + #13#10 +'Escola:' + #13#10 +'Etec João Baptista de Lima Figueiredo - Eletrô Mococa');
+end;
+
+end.
+
+

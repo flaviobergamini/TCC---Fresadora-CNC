@@ -1,0 +1,6 @@
+[PROJECTS]
+Count=2
+Project0=..\..\Projeto Hardware\controle CNC com serial\Software\Controle_Fresadora_CNC_com_serial.mcppi
+Project1=serial_teste.mcppi
+[ActiveProject]
+Index=1

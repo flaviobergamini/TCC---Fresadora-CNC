@@ -1,0 +1,22 @@
+char comando;
+
+void setup() 
+{
+  Serial.begin(9600);
+}
+
+void loop() 
+{
+  while(Serial.available() > 0) {
+  comando = Serial.read();
+
+  if(comando=='h'){
+    Serial.println("Iniciando Matrix...");
+    Serial.println(13);
+    Serial.println(10);
+  }  
+  if(comando=='H')
+    Serial.println("Desligando Matrix...");
+      
+  } 
+}

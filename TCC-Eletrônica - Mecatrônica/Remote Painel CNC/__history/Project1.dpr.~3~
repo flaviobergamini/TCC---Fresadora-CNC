@@ -1,0 +1,17 @@
+program Project1;
+
+uses
+  Vcl.Forms,
+  Uprincipal in 'Uprincipal.pas' {CNC_Eletro_Program},
+  Vcl.Themes,
+  Vcl.Styles;
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  TStyleManager.TrySetStyle('Glow');
+  Application.CreateForm(TCNC_Eletro_Program, CNC_Eletro_Program);
+  Application.Run;
+end.
